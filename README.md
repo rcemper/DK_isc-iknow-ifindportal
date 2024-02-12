@@ -38,3 +38,13 @@ There is no specific setup required. You can simply point the UI to a table with
 Alternatively, you can create a subclass of `Demo.SearchPortal.Home` and override the IFP* class parameters to point to your table and index of choice.
 
 More details on how to set up and use this app can be found in this article on the InterSystems Developer Community: https://community.intersystems.com/post/iknow-demo-apps-part-5-ifind-search-portal
+
+#### Test from docker console
+```
+$ docker-compose exec iris1 iris session iris
+USER>
+```
+or using **WebTerminal**
+```
+http://localhost:42773/terminal/
+```

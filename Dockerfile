@@ -1,21 +1,14 @@
-FROM store/intersystems/iris-community:2020.4.0.547.0
+# The most minimumalistic dockerfile possible.
 
-USER root
+ARG IMAGE=intersystemsdc/iris-community
+FROM $IMAGE
 
-ENV SRC_DIR=/home/irisowner
+WORKDIR /home/irisowner/dev
+COPY .iris_init /home/irisowner/.iris_init
 
-RUN mkdir /home/irisowner/code
-
-COPY --chown=irisowner src/ /home/irisowner/code/
-
-USER irisowner
-
-RUN iris start $ISC_PACKAGE_INSTANCENAME && \
-     /bin/echo -e " do \$system.OBJ.ImportDir(\"/home/irisowner/code/\",,\"c\",,1)\n" \
-     "SET sc = ##class(Demo.Hotels.Review).%BuildIndices()\n" \
-     "IF sc=1 {WRITE !,\"Successful index build\" }\n" \
-            " halt" \
-    | iris session $ISC_PACKAGE_INSTANCENAME && \
-    iris stop $ISC_PACKAGE_INSTANCENAME quietly
+RUN --mount=type=bind,src=.,dst=. \
+    iris start IRIS && \
+	iris session IRIS < iris.script && \
+    iris stop IRIS quietly
 
 HEALTHCHECK --interval=5s CMD /irisHealth.sh || exit 1
